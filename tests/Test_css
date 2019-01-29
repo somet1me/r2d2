@@ -1,0 +1,62 @@
+import pytest
+from selenium.webdriver.chrome import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
+
+
+
+
+
+def test_search():
+    drw = webdriver.WebDriver('/Users/somet1me/Desktop/r2d2/webdriver/chromedriver')
+    drw.get('http://www.google.ru')
+    drw.maximize_window()
+    element = WebDriverWait(drw, 20)\
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, '[title="Поиск"]')))
+    element.send_keys('selenide', Keys.ENTER)
+    element = WebDriverWait(drw, 20) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, 'div.r>a')))
+    str = element.get_attribute('href')
+    if str == 'https://ru.selenide.org/':
+        print(f'Ссылка "{str}" совпадает с ожидаемым результатом результатом "https://ru.selenide.org/" ')
+    else:
+        pytest.fail(f'Ссылка "{str}" не совпадает с ожидаемым результатом "https://ru.selenide.org/"')
+    element = WebDriverWait(drw, 3) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, '#ow16 > a')))
+    element.click()
+    element = WebDriverWait(drw, 3) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, '[id=lb]>div>a')))
+    element.click()
+    element = WebDriverWait(drw, 3) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, '[id=rg_s]>div>a:nth-child(2)')))
+    pic = element.text.strip()
+    i = "selenide.org" in pic
+    if i:
+        print('Изображение связано с сайтом selenide.org так как под ним содержится ссылка на сайт selenide.org')
+    else:
+        print('Изображение не связано с сайтом selenide.org')
+    element = WebDriverWait(drw, 3) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, '#hdtb-msb-vis > div:nth-child(1) > a')))
+    element.click()
+
+    element = WebDriverWait(drw, 20) \
+        .until(expected_conditions.
+               presence_of_element_located((By.CSS_SELECTOR, 'div.r>a')))
+    con = element.get_attribute('href')
+    if con==str:
+        print("Ссылки на сайт одинаковы, так как ссылка при первом шаге равна ссылке при третьем шаге")
+    else:
+        print("Ссылки не одинаковы")
+
+
+def tearDown(self):
+    self.drw.close()
